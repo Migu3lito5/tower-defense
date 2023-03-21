@@ -6,6 +6,7 @@ public class Turret : MonoBehaviour
 {
 
     private Transform target;
+    private Enemy targetEnemy;
 
     [Header("Attributes")]
     public float range = 15f;
@@ -21,6 +22,12 @@ public class Turret : MonoBehaviour
     public GameObject bulletPrefab;
     public Transform firePoint;
 
+    [Header("Use Laser")]
+    public bool useLaser = false;
+    public LineRenderer lineRenderer;
+    public int damageOverTime = 50;
+    public float slowPercentage = .5f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,21 +38,59 @@ public class Turret : MonoBehaviour
     void Update()
     {
         if (target == null)
-            return;
+        {
+            if(useLaser)
+            {
+                if(lineRenderer.enabled)
+                {
+                    lineRenderer.enabled = false;  
+                } 
+            }
 
+            return;
+        }
+            
+
+       
+
+        LookTarget();
+
+        if(useLaser)
+        {
+            Laser();
+        } else
+        {
+            if (fireCountDown <= 0f)
+            {
+                Shoot();
+                fireCountDown = 1f / fireRate;
+            }
+            fireCountDown -= Time.deltaTime;
+
+        }        
+    }
+
+    void Laser()
+    {
+
+        targetEnemy.TakeDamage(damageOverTime * Time.deltaTime);
+        targetEnemy.Slow(slowPercentage);
+
+        if (!lineRenderer.enabled)
+        {
+            lineRenderer.enabled = true;
+        }
+
+        lineRenderer.SetPosition(0, firePoint.position);
+        lineRenderer.SetPosition(1, target.position);
+    }
+
+    void LookTarget()
+    {
         Vector3 dir = target.position - transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(dir);
         Vector3 rotation = Quaternion.Lerp(Head.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
         Head.rotation = Quaternion.Euler(0f, rotation.y, 0f);
-
-
-        if(fireCountDown <= 0f)
-        {
-            Shoot();
-            fireCountDown = 1f / fireRate;
-        }
-
-        fireCountDown -= Time.deltaTime;
     }
 
     void UpdateTarget()
@@ -67,6 +112,7 @@ public class Turret : MonoBehaviour
         if(nearestEnemy != null && shortestDistance <= range)
         {
             target = nearestEnemy.transform;
+            targetEnemy = nearestEnemy.GetComponent<Enemy>();
         } else
         {
             target = null;
