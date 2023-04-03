@@ -7,6 +7,8 @@ public class BuildManager : MonoBehaviour
     public static BuildManager instance;
     
     private TurretBluePrint turretToBuild;
+    private Node selectedNode;
+    public NodeUI nodeUI;
 
     private void Awake()
     {
@@ -22,20 +24,36 @@ public class BuildManager : MonoBehaviour
     public bool CanBuild { get { return turretToBuild != null;  } }
     public bool HasMoney { get { return PlayerStats.Money >= turretToBuild.cost; } }
 
-
-
-    public void BuildTurretOn(Node node)
+    public void SelectNode (Node node)
     {
-        if (PlayerStats.Money < turretToBuild.cost) return;
 
-        PlayerStats.Money -= turretToBuild.cost;
+        if(selectedNode == node)
+        {
+            DeselectNode();
+            return;
+        }
 
-        GameObject turret = (GameObject) Instantiate(turretToBuild.prefab, node.GetBuildPosition(), Quaternion.identity);
-        node.turret = turret;
+        selectedNode = node;
+        turretToBuild = null;
+
+        nodeUI.SetTarget(node);
+    }
+    public void DeselectNode()
+    {
+        selectedNode = null;
+        nodeUI.Hide();
     }
 
     public void SelectTurretToBuild(TurretBluePrint turret)
     {
         turretToBuild = turret;
+        DeselectNode();
     }
+
+    public TurretBluePrint GetTurretToBuild()
+    {
+        return turretToBuild;
+    }
+
+
 }

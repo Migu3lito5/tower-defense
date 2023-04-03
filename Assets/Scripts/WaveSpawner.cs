@@ -12,6 +12,7 @@ public class WaveSpawner : MonoBehaviour
 
     public float timeBetweenWaves = 5.5f;
     private float countDown = 2f;
+
     private int waveIndex = 0;
 
     private void Update()
@@ -34,6 +35,7 @@ public class WaveSpawner : MonoBehaviour
         Debug.Log("Wave Incoming...");
 
         waveIndex++;
+        PlayerStats.Rounds++;
 
         for(int i = 0; i < waveIndex; i++)
         {

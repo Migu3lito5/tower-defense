@@ -10,6 +10,8 @@ public class Node : MonoBehaviour
 
     [Header("Optional")]
     public GameObject turret;
+    public TurretBluePrint turretBluePrint;
+    public bool isUpgraded = false;
 
 
     private Color startColor;
@@ -33,16 +35,50 @@ public class Node : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
 
-        if (!buildManager.CanBuild) return;
-
         if(turret != null)
         {
-            Debug.Log("Can't Build Here, Turret already exists...");
+            buildManager.SelectNode(this);
             return;
         }
 
-        buildManager.BuildTurretOn(this);
+        if (!buildManager.CanBuild) return;
 
+        BuildTurret(buildManager.GetTurretToBuild());
+
+    }
+
+    void BuildTurret (TurretBluePrint bluePrint)
+    {
+        
+        if (PlayerStats.Money < bluePrint.cost) return;
+
+        PlayerStats.Money -= bluePrint.cost;
+
+        GameObject turret = (GameObject)Instantiate(bluePrint.prefab, GetBuildPosition(), Quaternion.identity);
+        this.turret = turret;
+
+        turretBluePrint = bluePrint;
+    }
+
+    public void UpgradeTurret()
+    {
+        if (PlayerStats.Money < turretBluePrint.upgradeCost) return;
+
+        PlayerStats.Money -= turretBluePrint.upgradeCost;
+
+        Destroy(this.turret);
+
+        GameObject turret = (GameObject)Instantiate(turretBluePrint.upgradedprefab, GetBuildPosition(), Quaternion.identity);
+        this.turret = turret;
+
+        isUpgraded = true;
+    }
+
+    public void SellTurret()
+    {
+        PlayerStats.Money += turretBluePrint.GetSellAmount();
+        Destroy(this.turret);
+        turretBluePrint = null;
     }
 
     private void OnMouseEnter()

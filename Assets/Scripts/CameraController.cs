@@ -8,21 +8,17 @@ public class CameraController : MonoBehaviour
 
     public float panBorderThickness = 10f;
 
-    private bool doMovement = true;
     public float scrollSpeed = 5f;
     public float minY = 10f;
     public float maxY = 80f;
 
     private void Update()
     {
-
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(GameManager.GameIsOver)
         {
-            doMovement = !doMovement;
+            this.enabled = false;
+            return;
         }
-
-        if (!doMovement) return;
-
 
         if(Input.GetKey("w"))
         {
