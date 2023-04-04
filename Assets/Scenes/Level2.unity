@@ -19045,7 +19045,6 @@ MonoBehaviour:
   - enemy: {fileID: 2592459838746230135, guid: 3bb026109f5fa0d438f932cb04c39a26, type: 3}
     count: 20
     rate: 4
-  gameManager: {fileID: 1917607985}
   spawnPoint: {fileID: 1550381424}
   waveCountDownText: {fileID: 454816805}
   timeBetweenWaves: 2
@@ -19090,7 +19089,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startMoney: 400
-  startLives: 1
+  startLives: 5
 --- !u!114 &1917607985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19104,8 +19103,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOverUI: {fileID: 295205360}
-  nextLevel: Level2
-  levelToUnlock: 2
 --- !u!114 &1917607986
 MonoBehaviour:
   m_ObjectHideFlags: 0

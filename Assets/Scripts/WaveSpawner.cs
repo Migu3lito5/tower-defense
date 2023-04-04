@@ -5,7 +5,11 @@ using TMPro;
 
 public class WaveSpawner : MonoBehaviour
 {
-    public Transform enemyPrefab;
+    public static int EnemiesAlive = 0;
+    public Wave[] waves;
+    public GameManager gameManager;
+
+   // public Transform enemyPrefab;
     public Transform spawnPoint;
 
     public TextMeshProUGUI waveCountDownText;
@@ -17,10 +21,15 @@ public class WaveSpawner : MonoBehaviour
 
     private void Update()
     {
+
+        if (EnemiesAlive > 0) return;
+       
+
         if(countDown <= 0f)
         {
             StartCoroutine(spawnWave());
             countDown = timeBetweenWaves;
+            return;
         }
 
         countDown -= Time.deltaTime;
@@ -34,19 +43,33 @@ public class WaveSpawner : MonoBehaviour
     {
         Debug.Log("Wave Incoming...");
 
-        waveIndex++;
+        
         PlayerStats.Rounds++;
+        Wave wave = waves[waveIndex];
 
-        for(int i = 0; i < waveIndex; i++)
+        EnemiesAlive = wave.count;
+
+        for(int i = 0; i < wave.count; i++)
         {
-            spawnEnemy();
-            yield return new WaitForSeconds(0.4F);
+            spawnEnemy(wave.enemy);
+            yield return new WaitForSeconds(1 / wave.rate);
         }
+         
+        waveIndex++;
+
+        if(waveIndex == waves.Length)
+        {
+            gameManager.WinLevel();
+            this.enabled = false;
+
+        }
+
     }
 
-    void spawnEnemy()
+    void spawnEnemy(GameObject enemy)
     {
-        Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        Instantiate(enemy, spawnPoint.position, spawnPoint.rotation);
+        
     }
 
 }
