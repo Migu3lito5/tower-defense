@@ -17,33 +17,35 @@ public class EnemyMovement : MonoBehaviour
         target = Waypoints.points[0];
     }
 
-
-    private void Update()
-    {
-        Vector3 dir = target.position - transform.position;
-        transform.Translate(dir.normalized * enemy.speed * Time.deltaTime, Space.World);
-
-
-        if (Vector3.Distance(transform.position, target.position) <= 0.4f)
-        {
-            getNextWayPoint();
-        }
-
-        enemy.speed = enemy.startSpeed;
-    }
-
-    void getNextWayPoint()
-    {
-        if (wavepointIndex >= Waypoints.points.Length - 1)
-        {
-            EndPath();
-            return;
-        }
+    
+   private void Update()
+   {
+       
 
 
-        wavepointIndex++;
-        target = Waypoints.points[wavepointIndex];
-    }
+       if (Vector3.Distance(transform.position, target.position) <= 1f)
+       {
+           Debug.Log("Hit CheckPoint");
+           getNextWayPoint();
+       }
+
+       enemy.speed = enemy.startSpeed;
+   }
+
+   void getNextWayPoint()
+   {
+       if (wavepointIndex >= Waypoints.points.Length - 1)
+       {
+           EndPath();
+           return;
+       }
+
+
+       wavepointIndex++;
+       target = Waypoints.points[wavepointIndex];
+   }
+
+
 
     void EndPath()
     {
